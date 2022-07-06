@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState} from "react";
-import {BrowserRouter, Routes, Route, Link, useNavigate} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Link, useNavigate, useParams} from "react-router-dom";
 import {Form} from "react-bootstrap";
 
 function App() {
@@ -10,12 +10,12 @@ function App() {
             <nav>
                 <Link to="/" className="navlink">Players</Link>
                 <Link to="/addPlayer" className="navlink">add Player</Link>
-                <Link to="/updatePlayer" className="navlink">update Player</Link>
+                <Link to="/updatePlayer:id" className="navlink">update Player</Link>
             </nav>
             <Routes>
                 <Route path="/" element={<Players/>}/>
                 <Route path="/addPlayer" element={<AddPlayer/>}/>
-                <Route path="/updatePlayer" element={<UpdatePlayer/>}/>
+                <Route path="/updatePlayer/:itemId" element={<UpdatePlayer/>}/>
             </Routes>
         </BrowserRouter>
     )
@@ -54,7 +54,7 @@ function Players({navigation}) {
                             <img src={players.url} height={200} width={300}/>
                             <h3>{players.name + " " + players.surname}</h3>
                             <p>{"Nummer:" + " " + players.number}</p>
-                            <button onClick={()=>navigate("/updatePlayer")}>Update Player</button>
+                            <button onClick={()=>navigate("/updatePlayer/"+players.id)}>Update Player</button>
                             <button onClick={() => {
                                 setUrl("http://localhost:8080/player/" + players.id)
                             }}>Delete
@@ -133,7 +133,7 @@ function AddPlayer() {
     );
 }
 
-function UpdatePlayer({ route, navigation }) {
+function UpdatePlayer() {
     const [player, setPlayer] = useState({
         name: "",
         surname: "",
@@ -145,7 +145,7 @@ function UpdatePlayer({ route, navigation }) {
         club: "",
         url: ""
     });
-    const { itemId, otherParam } = route.params;
+    let { itemId } = useParams();
     const [name, setName] = useState(itemId.name);
     const [surname, setSurname] = useState(itemId.surname);
     const [number, setNumber] = useState(itemId.number);
