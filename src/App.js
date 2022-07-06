@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState} from "react";
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Link, useNavigate} from "react-router-dom";
 import {Form} from "react-bootstrap";
 
 function App() {
@@ -10,16 +10,18 @@ function App() {
             <nav>
                 <Link to="/" className="navlink">Players</Link>
                 <Link to="/addPlayer" className="navlink">add Player</Link>
+                <Link to="/updatePlayer" className="navlink">update Player</Link>
             </nav>
             <Routes>
                 <Route path="/" element={<Players/>}/>
                 <Route path="/addPlayer" element={<AddPlayer/>}/>
+                <Route path="/updatePlayer" element={<UpdatePlayer/>}/>
             </Routes>
         </BrowserRouter>
     )
 }
 
-function Players() {
+function Players({navigation}) {
     function loadPlayers() {
         fetch("http://localhost:8080/player")
             .then((response) => response.json())
@@ -40,6 +42,7 @@ function Players() {
         })
             .then(() => loadPlayers())
     }, [url])
+    let navigate = useNavigate();
 
     return (
         <>
@@ -51,10 +54,10 @@ function Players() {
                             <img src={players.url} height={200} width={300}/>
                             <h3>{players.name + " " + players.surname}</h3>
                             <p>{"Nummer:" + " " + players.number}</p>
-                            <button onClick={UpdatePlayer()}>Update Player</button>
+                            <button onClick={()=>navigate("/updatePlayer")}>Update Player</button>
                             <button onClick={() => {
                                 setUrl("http://localhost:8080/player/" + players.id)
-                            }}>set player to DELETE
+                            }}>Delete
                             </button>
                         </div>
                     </li>
@@ -130,7 +133,7 @@ function AddPlayer() {
     );
 }
 
-function UpdatePlayer() {
+function UpdatePlayer({ route, navigation }) {
     const [player, setPlayer] = useState({
         name: "",
         surname: "",
@@ -142,15 +145,16 @@ function UpdatePlayer() {
         club: "",
         url: ""
     });
-    const [name, setName] = useState("name");
-    const [surname, setSurname] = useState("surname");
-    const [number, setNumber] = useState(15);
-    const [birthdate, setBirthdate] = useState("2002-12-12");
-    const [nationality, setNationality] = useState("switzerland");
-    const [height, setHeight] = useState(187);
-    const [worth, setWorth] = useState(187000000);
-    const [club, setClub] = useState("fc liverpool");
-    const [url, setUrl] = useState("https://yt3.ggpht.com/G-xQ-34A-GcfZm9ByvMnFEf1TjOatTKrJ3g0XaL1kXqCbin-7hTXhQBDe3VYtcAhx59iKG9C5jA=s900-c-k-c0x00ffffff-no-rj");
+    const { itemId, otherParam } = route.params;
+    const [name, setName] = useState(itemId.name);
+    const [surname, setSurname] = useState(itemId.surname);
+    const [number, setNumber] = useState(itemId.number);
+    const [birthdate, setBirthdate] = useState(itemId.birthdate);
+    const [nationality, setNationality] = useState(itemId.nationality);
+    const [height, setHeight] = useState(itemId.height);
+    const [worth, setWorth] = useState(itemId.worth);
+    const [club, setClub] = useState(itemId.club);
+    const [url, setUrl] = useState(itemId.url);
     useEffect(() => {
         console.log(JSON.stringify(player))
         fetch("http://localhost:8080/player", {
