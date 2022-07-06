@@ -46,7 +46,7 @@ function Players({navigation}) {
     return (
         <>
             <div>Spieler</div>
-            <div>Total Team Worth: </div>
+            <div>Total Team Worth:</div>
             <ul className="thumbnails">
                 {players.map(players =>
                     <li className="span4">
@@ -54,7 +54,7 @@ function Players({navigation}) {
                             <img src={players.url} height={200} width={300}/>
                             <h3>{players.name + " " + players.surname}</h3>
                             <p>{"Nummer:" + " " + players.number}</p>
-                            <button onClick={()=>navigate("/updatePlayer/"+players.id)}>Update Player</button>
+                            <button onClick={() => navigate("/updatePlayer/" + players.id)}>Update Player</button>
                             <button onClick={() => {
                                 setUrl("http://localhost:8080/player/" + players.id)
                             }}>Delete
@@ -146,26 +146,27 @@ function UpdatePlayer() {
         url: ""
     });
 
-    let { itemId } = useParams();
-    useEffect(()=>{
-    fetch('http://localhost:8080/player/' + itemId)
-        .then((response) => response.json())
-        .then((data) => {
-            setName(data.name)
-            setSurname(data.surname)
-            setNumber(data.number)
-            setBirthdate(data.birthdate)
-            setNationality(data.nationality)
-            setHeight(data.height)
-            setWorth(data.worth)
-            setClub(data.club)
-            setUrl(data.url)
-        })},[itemId]
+    let {itemId} = useParams();
+    useEffect(() => {
+            fetch('http://localhost:8080/player/' + itemId)
+                .then((response) => response.json())
+                .then((data) => {
+                    setName(data.name)
+                    setSurname(data.surname)
+                    setNumber(data.number)
+                    setBirthdate(data.birthdate)
+                    setNationality(data.nationality)
+                    setHeight(data.height)
+                    setWorth(data.worth)
+                    setClub(data.club)
+                    setUrl(data.url)
+                })
+        }, [itemId]
     )
 
     useEffect(() => {
         console.log(JSON.stringify(player))
-        fetch("http://localhost:8080/player/"+itemId, {
+        fetch("http://localhost:8080/player/" + itemId, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
