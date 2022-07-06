@@ -10,7 +10,6 @@ function App() {
             <nav>
                 <Link to="/" className="navlink">Players</Link>
                 <Link to="/addPlayer" className="navlink">add Player</Link>
-                <Link to="/updatePlayer:id" className="navlink">update Player</Link>
             </nav>
             <Routes>
                 <Route path="/" element={<Players/>}/>
@@ -47,6 +46,7 @@ function Players({navigation}) {
     return (
         <>
             <div>Spieler</div>
+            <div>Total Team Worth: </div>
             <ul className="thumbnails">
                 {players.map(players =>
                     <li className="span4">
@@ -145,19 +145,27 @@ function UpdatePlayer() {
         club: "",
         url: ""
     });
+
     let { itemId } = useParams();
-    const [name, setName] = useState(itemId.name);
-    const [surname, setSurname] = useState(itemId.surname);
-    const [number, setNumber] = useState(itemId.number);
-    const [birthdate, setBirthdate] = useState(itemId.birthdate);
-    const [nationality, setNationality] = useState(itemId.nationality);
-    const [height, setHeight] = useState(itemId.height);
-    const [worth, setWorth] = useState(itemId.worth);
-    const [club, setClub] = useState(itemId.club);
-    const [url, setUrl] = useState(itemId.url);
+    useEffect(()=>{
+    fetch('http://localhost:8080/player/' + itemId)
+        .then((response) => response.json())
+        .then((data) => {
+            setName(data.name)
+            setSurname(data.surname)
+            setNumber(data.number)
+            setBirthdate(data.birthdate)
+            setNationality(data.nationality)
+            setHeight(data.height)
+            setWorth(data.worth)
+            setClub(data.club)
+            setUrl(data.url)
+        })},[itemId]
+    )
+
     useEffect(() => {
         console.log(JSON.stringify(player))
-        fetch("http://localhost:8080/player", {
+        fetch("http://localhost:8080/player/"+itemId, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
@@ -168,6 +176,15 @@ function UpdatePlayer() {
             .then((response) => response.json())
             .then((data) => console.log())
     }, [player])
+    const [name, setName] = useState();
+    const [surname, setSurname] = useState();
+    const [number, setNumber] = useState();
+    const [birthdate, setBirthdate] = useState();
+    const [nationality, setNationality] = useState();
+    const [height, setHeight] = useState();
+    const [worth, setWorth] = useState();
+    const [club, setClub] = useState();
+    const [url, setUrl] = useState();
     return (
         <>
             <h1>Spieler hinzufügen</h1>
@@ -194,7 +211,7 @@ function UpdatePlayer() {
                     setPlayer({name, surname, number, birthdate, nationality, height, worth, club, url})
                 }
 
-            >Add Player
+            >Update Player
             </button>
         </>
     );
